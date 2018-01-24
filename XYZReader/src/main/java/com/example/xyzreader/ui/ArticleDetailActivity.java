@@ -1,7 +1,6 @@
 package com.example.xyzreader.ui;
 
 import android.app.LoaderManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
@@ -31,31 +30,14 @@ import com.example.xyzreader.data.ItemsContract;
  */
 public class ArticleDetailActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
-    private static final String ARG_VALUE_ID = "value_id";
-    public static final String ARG_ITEM = "image_url";
-    public static final String ARG_IMAGE_TRANSITION_NAME = "image_transition_name";
 
     private Cursor mCursor;
     private long mStartId;
 
     private long mSelectedItemId;
-    private int mSelectedItemUpButtonFloor = Integer.MAX_VALUE;
-    private int mTopInset;
 
     private ViewPager mPager;
     private MyPagerAdapter mPagerAdapter;
-    private View mUpButtonContainer;
-    private View mUpButton;
-    private String imageTransitionName;
-    private View mRootView;
-
-    public static Intent newIntent(Context packageContent, long id, String sharedPreferences) {
-        Log.d("MIKE Activity intent:::", String.valueOf(id));
-        Intent intent = new Intent(packageContent, ArticleDetailActivity.class);
-        intent.putExtra(ARG_VALUE_ID, id);
-        intent.putExtra(ARG_IMAGE_TRANSITION_NAME, sharedPreferences);
-        return intent;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -70,31 +52,22 @@ public class ArticleDetailActivity extends AppCompatActivity
                 .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1,
                         getResources().getDisplayMetrics()));
         mPager.setPageMarginDrawable(new ColorDrawable(0x22000000));
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            setSharedElementEnterTransition(TransitionInflater.from(getContext()).inflateTransition(android.R.transition.move));
-//        }
-//        setSharedElementReturnTransition(null);
 
         if (savedInstanceState == null) {
             if (getIntent() != null && getIntent().getData() != null) {
-                Log.d("MIKE", "trigger an exception");
                 mStartId = ItemsContract.Items.getItemId(getIntent().getData());
                 mSelectedItemId = mStartId;
             }
         }
-//        getWindow().setEnterTransition(TransitionInflater.from(this).inflateTransition(R.transition.fade_it));
-//        getWindow().setExitTransition(TransitionInflater.from(this).inflateTransition(R.transition.fade_it));
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        Log.d("MIKE actdet ", "on createLoader MIKE4 this should not be need it");
         return ArticleLoader.newAllArticlesInstance(this);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        Log.d("MIKE act ", "onLoadFinished MIKE5");
         mCursor = cursor;
         mPagerAdapter.swapCursor(cursor);
 
@@ -114,23 +87,8 @@ public class ArticleDetailActivity extends AppCompatActivity
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
-        Log.d("MIKE DetAct", "detAct MIKE7");
         mCursor = null;
         mPagerAdapter.notifyDataSetChanged();
-    }
-
-    public void onUpButtonFloorChanged(long itemId, ArticleDetailFragment fragment) {
-        Log.d("MIKE ", " onUpButtonFloorChanged MIKE8");
-        if (itemId == mSelectedItemId) {
-            mSelectedItemUpButtonFloor = fragment.getUpButtonFloor();
-            // updateUpButtonPosition();
-        }
-    }
-
-    private void updateUpButtonPosition() {
-        Log.d("MIKE ACti", "updateUpButtonPosition MIKE3");
-        int upButtonNormalBottom = mTopInset + mUpButton.getHeight();
-        mUpButton.setTranslationY(Math.min(mSelectedItemUpButtonFloor - upButtonNormalBottom, 0));
     }
 
     private class MyPagerAdapter extends FragmentStatePagerAdapter {
@@ -147,14 +105,12 @@ public class ArticleDetailActivity extends AppCompatActivity
 
         @Override
         public Fragment getItem(int position) {
-            Log.d("MIKE act getITEM", "MIKE10");
             if (mCursor == null) {
-                Log.d("MIKE", "getItem mCursor == null");
                 return null;
             }
 
             if (mCursor.moveToPosition(position)) {
-                return ArticleDetailFragment.newInstance(mCursor.getLong(ArticleLoader.Query._ID), imageTransitionName);
+                return ArticleDetailFragment.newInstance(mCursor.getLong(ArticleLoader.Query._ID));
             }
             return null;
         }

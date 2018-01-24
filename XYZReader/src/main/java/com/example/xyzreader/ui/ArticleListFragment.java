@@ -21,7 +21,6 @@ import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Interpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -43,14 +42,7 @@ import java.util.GregorianCalendar;
 public class ArticleListFragment extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor> {
 
-    public static final String ARG_ITEM = "image_url";
-    private static final String ARG_VALUE_ID = "value_id";
-    public static final String ARG_IMAGE_TRANSITION_NAME = "image_transition_name";
-    public static final String ARG_IMAGE_TRANSITION_NAME_IMAGE = "image_transition_name_image";
-
     private static final String TAG = ArticleListFragment.class.toString();
-
-    private Context mContext;
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
     // Use default locale format
@@ -66,14 +58,12 @@ public class ArticleListFragment extends AppCompatActivity implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("MIKE", "OnCreateFragment");
         setContentView(R.layout.activity_article_list);
         mSwipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                //Binding.swipeRefreshLayout.setRefreshing(false);
                 refresh();
             }
         });
@@ -167,22 +157,16 @@ public class ArticleListFragment extends AppCompatActivity implements
 
     private class Adapter extends RecyclerView.Adapter<ArticleListFragment.ViewHolder> {
         private Cursor mCursor;
-        private Interpolator mInterpolator;
-        private int lastAnimatedPosition = -1;
         private Activity mActivity;
 
         public Adapter(Activity activity, Cursor cursor) {
             mCursor = cursor;
             mActivity = activity;
-//            mInterpolator = AnimationUtils.loadInterpolator(getActivity(), android.R.interpolator.linear_out_slow_in);
         }
 
         @Override
         public long getItemId(int position) {
             mCursor.moveToPosition(position);
-
-            Log.d("MIKE 23A:", Long.toString(mCursor.getLong(ArticleLoader.Query._ID)));
-            Log.d("MIKE 23B:", mCursor.getString(ArticleLoader.Query.TITLE));
             return mCursor.getLong(ArticleLoader.Query._ID);
         }
 
@@ -194,24 +178,12 @@ public class ArticleListFragment extends AppCompatActivity implements
                 @Override
                 public void onClick(View view) {
                     //TODO, testing this animation remove it
-//                    int finalRadius = (int)Math.hypot(view.getWidth()/2, view.getHeight()/2);
-//                    Animator anim = ViewAnimationUtils.createCircularReveal(view, (int) view.getWidth()/2,
-//                            (int) view.getHeight()/2, 0, finalRadius);
-//                    anim.start();
-
                     ActivityOptions transitionActivityOptions = ActivityOptions.makeSceneTransitionAnimation(mActivity,
                             vh.thumbnailView,
                             getApplicationContext().getString(R.string.article_image_transition));
                     startActivity(new Intent(Intent.ACTION_VIEW,
                             ItemsContract.Items.buildItemUri(getItemId(vh.getAdapterPosition()))), transitionActivityOptions.toBundle());
                     ////TODO END, testing this animation remove it
-
-                    long value = getItemId(vh.getAdapterPosition());
-
-                    ImageView imageView = view.findViewById(R.id.thumbnail);
-
-                    Log.d("MIKECLICKB", Long.toString(value));
-                    Log.d("MIKECLICKB", imageView.toString());
                 }
             });
             return vh;
@@ -249,29 +221,11 @@ public class ArticleListFragment extends AppCompatActivity implements
                                 + mCursor.getString(ArticleLoader.Query.AUTHOR)));
             }
 
-//            ViewCompat.setTransitionName(holder.thumbnailView, mCursor.getString(ArticleLoader.Query._ID));
-
-//            ViewCompat.setTransitionName(holder.thumbnailView, mContext.getString(R.string.article_image_transition));
-
             Picasso.with(mActivity)
                     .load(mCursor.getString(ArticleLoader.Query.THUMB_URL))
                     .error(R.drawable.empty_detail)
                     .into(holder.thumbnailView);
         }
-
-//        private void setAnimation(View viewToAnimate, int position) {
-//            if (position > lastAnimatedPosition) {
-//                viewToAnimate.setTranslationY((position + 1) * 1000);
-//                viewToAnimate.setAlpha(0.85f);
-//                viewToAnimate.animate()
-//                        .translationY(0f)
-//                        .alpha(1f)
-//                        .setInterpolator(mInterpolator)
-//                        .setDuration(1000L)
-//                        .start();
-//                lastAnimatedPosition = position;
-//            }
-//        }
 
         @Override
         public int getItemCount() {
@@ -286,9 +240,9 @@ public class ArticleListFragment extends AppCompatActivity implements
 
         public ViewHolder(View view) {
             super(view);
-            thumbnailView = (ImageView) view.findViewById(R.id.thumbnail);
-            titleView = (TextView) view.findViewById(R.id.article_title);
-            subtitleView = (TextView) view.findViewById(R.id.article_subtitle);
+            thumbnailView = view.findViewById(R.id.thumbnail);
+            titleView = view.findViewById(R.id.article_title);
+            subtitleView = view.findViewById(R.id.article_subtitle);
         }
     }
 }

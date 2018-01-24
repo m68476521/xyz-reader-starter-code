@@ -38,13 +38,6 @@
                 android:value=".ui.ArticleListActivity" />
         </activity>
 
-
-        <activity
-            android:name=".ui.ArticleDetailMainActivity"
-            android:parentActivityName=".ui.ArticleDetailMainActivity"
-            >
-        </activity>
-
         <service android:name=".data.UpdaterService"
             android:exported="false" />
 

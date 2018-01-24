@@ -16,7 +16,6 @@ import android.support.v4.app.ShareCompat;
 import android.text.Html;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
-import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -50,23 +49,13 @@ public class ArticleDetailFragment extends Fragment
     private static final String TAG = "ArticleDetailFragment";
 
     public static final String ARG_ITEM_ID = "item_id";
-    public static final String ARG_IMAGE_TRANSITION_NAME = "image_transition_name";
-    private static final float PARALLAX_FACTOR = 1.25f;
 
     private Cursor mCursor;
     private long mItemId;
-    private String mSharedAnimation;
 
-    private int mMutedColor = 0xFF333333;
-    private ObservableScrollView mScrollView;
-    private DrawInsetsFrameLayout mDrawInsetsFrameLayout;
-    private ColorDrawable mStatusBarColorDrawable;
     private FloatingActionButton mFloatingActionButton;
 
-    private int mTopInset;
-    private View mPhotoContainerView;
     private ImageView mPhotoView;
-    private int mScrollY;
     private View mRootView;
     private boolean mIsCard = false;
     private boolean mIsVisibleToUser = false;
@@ -75,7 +64,6 @@ public class ArticleDetailFragment extends Fragment
     private ProgressDialog dialog;
     private String bodyDetails;
     private String imageUrl;
-
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
     // Use default locale format
@@ -90,13 +78,10 @@ public class ArticleDetailFragment extends Fragment
     public ArticleDetailFragment() {
     }
 
-    public static ArticleDetailFragment newInstance(long itemId, String transitionName) {
-        Log.d("MIKE detFrag ", "instabceADF MIKE21");
-        Log.d("MIKE detFrag ID ", Long.toString(itemId));
-        Log.d("MIKE detFrag  ", "transitionName " + transitionName);
+    public static ArticleDetailFragment newInstance(long itemId) {
         Bundle arguments = new Bundle();
         arguments.putLong(ARG_ITEM_ID, itemId);
-        arguments.putString(ARG_IMAGE_TRANSITION_NAME, transitionName);
+
         ArticleDetailFragment fragment = new ArticleDetailFragment();
         fragment.setArguments(arguments);
         return fragment;
@@ -106,42 +91,29 @@ public class ArticleDetailFragment extends Fragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         postponeEnterTransition();
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            setSharedElementEnterTransition(TransitionInflater.from(getContext()).inflateTransition(android.R.transition.move));
-//        }
-
-        Log.d("MIKE frag", "onCreate22");
 
         if (getArguments().containsKey(ARG_ITEM_ID)) {
             mItemId = getArguments().getLong(ARG_ITEM_ID);
-//            mSharedAnimation = getArguments().getString(ARG_IMAGE_TRANSITION_NAME);
-            //Log.d("MIKE sharedAnimation:::", mSharedAnimation);
         }
 
         mIsCard = getResources().getBoolean(R.bool.detail_is_card);
         mStatusBarFullOpacityBottom = getResources().getDimensionPixelSize(
                 R.dimen.detail_card_top_margin);
         setHasOptionsMenu(true);
-        //getLoaderManager().initLoader(0, null, this);
         Cursor c = getActivity().getContentResolver().query(ItemsContract.Items.buildItemUri(mItemId), ArticleLoader.Query.PROJECTION, null, null, ItemsContract.Items.DEFAULT_SORT);
         mCursor = c;
         mCursor.moveToFirst();
-        Log.d("MIKE ", "  - - - - - - >m68");
-        Log.d("MIKE TITLE", mCursor.getString(ArticleLoader.Query.TITLE));
-        Log.d("MIKE TITLE", mCursor.getString(ArticleLoader.Query._ID));
         imageUrl = mCursor.getString(ArticleLoader.Query.PHOTO_URL);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d("MIKE frag ", " bindViews21 onCreateView24");
-//        bindViews();
         mRootView = inflater.inflate(R.layout.fragment_article_detail, container, false);
 
-        mPhotoView = (ImageView) getActivity().findViewById(R.id.imgTitle);
+        mPhotoView = getActivity().findViewById(R.id.imgTitle);
 
-        mFloatingActionButton = (FloatingActionButton) getActivity().findViewById(R.id.share_fab);
+        mFloatingActionButton =  getActivity().findViewById(R.id.share_fab);
         mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -157,7 +129,6 @@ public class ArticleDetailFragment extends Fragment
     }
 
     private Date parsePublishedDate() {
-        Log.d("MIKE frag", "parsePublishedDate onCreate27");
         try {
             String date = mCursor.getString(ArticleLoader.Query.PUBLISHED_DATE);
             return dateFormat.parse(date);
@@ -169,15 +140,14 @@ public class ArticleDetailFragment extends Fragment
     }
 
     private void bindViews() {
-        Log.d("MIKE frag", " bindViews onCreate29");
         if (mRootView == null) {
             return;
         }
 
-        TextView titleView = (TextView) mRootView.findViewById(R.id.article_title);
-        TextView bylineView = (TextView) mRootView.findViewById(R.id.article_byline);
+        TextView titleView = mRootView.findViewById(R.id.article_title);
+        TextView bylineView = mRootView.findViewById(R.id.article_byline);
         bylineView.setMovementMethod(new LinkMovementMethod());
-        final TextView bodyView = (TextView) mRootView.findViewById(R.id.article_body);
+        final TextView bodyView = mRootView.findViewById(R.id.article_body);
         TextView seeMore = mRootView.findViewById(R.id.seeMoreTextView);
 
         bodyView.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "Rosario-Regular.ttf"));
@@ -187,7 +157,6 @@ public class ArticleDetailFragment extends Fragment
             mRootView.setVisibility(View.VISIBLE);
             mRootView.animate().alpha(1);
             titleView.setText(mCursor.getString(ArticleLoader.Query.TITLE));
-            Log.d("MIKE TITLE XXX", mCursor.getString(ArticleLoader.Query.TITLE));
             Date publishedDate = parsePublishedDate();
             if (!publishedDate.before(START_OF_EPOCH.getTime())) {
                 bylineView.setText(Html.fromHtml(
@@ -218,18 +187,12 @@ public class ArticleDetailFragment extends Fragment
             seeMore.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
-//                    dialog = ProgressDialog.show(getActivity(), "",
-//                            "Loading. Please wait...", true);
-
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
                             try {
-                                Log.d("MIKE run", "test1");
                                 getActivity().runOnUiThread(new Runnable() {
                                     public void run() {
-
                                         showPopupBodyInfo(bodyDetails);
                                     }
                                 });
@@ -241,20 +204,7 @@ public class ArticleDetailFragment extends Fragment
                 }
             });
 
-            // Log.d("MIKE setA", mSharedAnimation);
-            Log.d("MIKE setB", mCursor.getString(ArticleLoader.Query._ID));
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP &&
-//                    mSharedAnimation.equals(mCursor.getString(ArticleLoader.Query._ID))) {
-////                imageView.setTransitionName(transitionName);
-//                Log.d("MIKE set", "transitionFinal");
-//                Log.d("MIKE set", "transitionFinal: " + mSharedAnimation);
-//                 mPhotoView.setTransitionName(mSharedAnimation);
-//            }
-
-            Log.d("MIKE IMAGE2: ", mCursor.getString(ArticleLoader.Query.PHOTO_URL));
-
             if (mIsVisibleToUser) {
-                Log.d("MIKE IMAGE3: ", mCursor.getString(ArticleLoader.Query.PHOTO_URL));
                 updateImage();
             }
 
@@ -268,15 +218,11 @@ public class ArticleDetailFragment extends Fragment
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        Log.d("MIKE frag", "onCreateLoaderonCreate29 ID: " + Long.toString(mItemId));
         return ArticleLoader.newInstanceForItemId(getActivity(), mItemId);
     }
 
-
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        Log.d("MIKE fragloadFinished", "onCreate30");
-
         if (!isAdded()) {
             if (cursor != null) {
                 cursor.close();
@@ -290,25 +236,13 @@ public class ArticleDetailFragment extends Fragment
             mCursor.close();
             mCursor = null;
         }
-        Log.d("MIKE ", " bindViews24 bindingViewA");
         bindViews();
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
         mCursor = null;
-        Log.d("MIKE detFrag", "onLoaderResetonCreate31");
-        Log.d("MIKE ", " bindViews25 bindingViewC");
         bindViews();
-    }
-
-    public int getUpButtonFloor() {
-        Log.d("MIKE fragment ", "getUpButtonFloor onCreate32");
-
-        // account for parallax
-        return mIsCard
-                ? (int) mPhotoContainerView.getTranslationY() + mPhotoView.getHeight() - mScrollY
-                : mPhotoView.getHeight() - mScrollY;
     }
 
     public void showPopupBodyInfo(String bodytext) {
@@ -355,11 +289,9 @@ public class ArticleDetailFragment extends Fragment
         super.setUserVisibleHint(isVisibleToUser);
         mIsVisibleToUser = isVisibleToUser;
         if (mRootView == null) {
-            Log.d("MIKE ", "mRootView is null");
             return;
         }
         if (isVisibleToUser && mRootView != null) {
-            Log.d("MIKE ", "updateImage VISIBKE");
             updateImage();
         }
     }
