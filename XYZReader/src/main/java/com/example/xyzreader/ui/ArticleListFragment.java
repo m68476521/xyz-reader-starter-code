@@ -97,7 +97,7 @@ public class ArticleListFragment extends AppCompatActivity implements
                     mCollapsingToolbarLayout.setTitle("xyzreader");
                     isShow = true;
                 } else if (isShow) {
-                    mCollapsingToolbarLayout.setTitle("xyzreader");
+                    mCollapsingToolbarLayout.setTitle("");
                 }
             }
         });
