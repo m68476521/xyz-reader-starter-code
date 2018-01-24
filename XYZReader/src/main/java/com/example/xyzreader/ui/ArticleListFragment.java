@@ -11,6 +11,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -28,7 +29,6 @@ import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.ItemsContract;
 import com.example.xyzreader.data.UpdaterService;
-import com.example.xyzreader.databinding.ActivityArticleListBinding;
 import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
@@ -48,10 +48,8 @@ public class ArticleListFragment extends AppCompatActivity implements
     public static final String ARG_IMAGE_TRANSITION_NAME = "image_transition_name";
     public static final String ARG_IMAGE_TRANSITION_NAME_IMAGE = "image_transition_name_image";
 
-
     private static final String TAG = ArticleListFragment.class.toString();
 
-    private ActivityArticleListBinding Binding;
     private Context mContext;
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
@@ -63,6 +61,7 @@ public class ArticleListFragment extends AppCompatActivity implements
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
     private AppBarLayout mAppBarLayout;
+    private CollapsingToolbarLayout mCollapsingToolbarLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,6 +82,8 @@ public class ArticleListFragment extends AppCompatActivity implements
 
         mAppBarLayout = findViewById(R.id.app_bar_layout);
 
+        mCollapsingToolbarLayout = findViewById(R.id.collapsing_toolbar_layout);
+
         mAppBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             boolean isShow = false;
             int scrollRange = -1;
@@ -93,10 +94,10 @@ public class ArticleListFragment extends AppCompatActivity implements
                     scrollRange = appBarLayout.getTotalScrollRange();
                 }
                 if (scrollRange + verticalOffset == 0) {
-                    Binding.collapsingToolbarLayout.setTitle("xyzreader");
+                    mCollapsingToolbarLayout.setTitle("xyzreader");
                     isShow = true;
                 } else if (isShow) {
-                    Binding.collapsingToolbarLayout.setTitle("xyzreader");
+                    mCollapsingToolbarLayout.setTitle("xyzreader");
                 }
             }
         });
@@ -161,7 +162,7 @@ public class ArticleListFragment extends AppCompatActivity implements
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        Binding.recyclerView.setAdapter(null);
+        mRecyclerView.setAdapter(null);
     }
 
     private class Adapter extends RecyclerView.Adapter<ArticleListFragment.ViewHolder> {

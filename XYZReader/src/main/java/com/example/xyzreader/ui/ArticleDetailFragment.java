@@ -106,15 +106,15 @@ public class ArticleDetailFragment extends Fragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         postponeEnterTransition();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            setSharedElementEnterTransition(TransitionInflater.from(getContext()).inflateTransition(android.R.transition.move));
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            setSharedElementEnterTransition(TransitionInflater.from(getContext()).inflateTransition(android.R.transition.move));
+//        }
 
         Log.d("MIKE frag", "onCreate22");
 
         if (getArguments().containsKey(ARG_ITEM_ID)) {
             mItemId = getArguments().getLong(ARG_ITEM_ID);
-            //mSharedAnimation = getArguments().getString(ARG_IMAGE_TRANSITION_NAME);
+//            mSharedAnimation = getArguments().getString(ARG_IMAGE_TRANSITION_NAME);
             //Log.d("MIKE sharedAnimation:::", mSharedAnimation);
         }
 
@@ -248,9 +248,8 @@ public class ArticleDetailFragment extends Fragment
 ////                imageView.setTransitionName(transitionName);
 //                Log.d("MIKE set", "transitionFinal");
 //                Log.d("MIKE set", "transitionFinal: " + mSharedAnimation);
-////                 mPhotoView.setTransitionName(mSharedAnimation);
+//                 mPhotoView.setTransitionName(mSharedAnimation);
 //            }
-            //mPhotoView.setTransitionName("simple_activity_transition");
 
             Log.d("MIKE IMAGE2: ", mCursor.getString(ArticleLoader.Query.PHOTO_URL));
 
@@ -360,7 +359,7 @@ public class ArticleDetailFragment extends Fragment
             return;
         }
         if (isVisibleToUser && mRootView != null) {
-            Log.d("MIKE ", "updateImage");
+            Log.d("MIKE ", "updateImage VISIBKE");
             updateImage();
         }
     }

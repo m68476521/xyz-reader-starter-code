@@ -5,18 +5,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.ShareCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.ItemsContract;
@@ -77,6 +82,8 @@ public class ArticleDetailActivity extends AppCompatActivity
                 mSelectedItemId = mStartId;
             }
         }
+//        getWindow().setEnterTransition(TransitionInflater.from(this).inflateTransition(R.transition.fade_it));
+//        getWindow().setExitTransition(TransitionInflater.from(this).inflateTransition(R.transition.fade_it));
     }
 
     @Override
@@ -96,7 +103,7 @@ public class ArticleDetailActivity extends AppCompatActivity
             mCursor.moveToFirst();
             for (mCursor.moveToFirst(); !mCursor.isAfterLast(); mCursor.moveToNext()) {
                 if (mCursor.getLong(ArticleLoader.Query._ID) == mStartId) {
-                    //  changeViews();
+                    changeViews();
                     mPager.setCurrentItem(mCursor.getPosition(), false);
                     break;
                 }
@@ -160,6 +167,37 @@ public class ArticleDetailActivity extends AppCompatActivity
         public void swapCursor(Cursor cursor) {
             mCursor = cursor;
             notifyDataSetChanged();
+        }
+    }
+
+    public void changeViews() {
+        try {
+            findViewById(R.id.share_fab).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    startActivity(Intent.createChooser(ShareCompat.IntentBuilder.from(ArticleDetailActivity.this)
+                            .setType("text/plain")
+                            .setText(mCursor.getString(ArticleLoader.Query.TITLE))
+                            .getIntent(), getString(R.string.action_share)));
+                }
+            });
+            ImageLoaderHelper.getInstance(this).getImageLoader()
+                    .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL), new ImageLoader.ImageListener() {
+                        @Override
+                        public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
+                            Bitmap bitmap = imageContainer.getBitmap();
+                            if (bitmap != null) {
+                                ((ImageView) findViewById(R.id.imgTitle)).setImageBitmap(imageContainer.getBitmap());
+                            }
+                        }
+
+                        @Override
+                        public void onErrorResponse(VolleyError volleyError) {
+
+                        }
+                    });
+
+        } catch (Exception ex) {
         }
     }
 }
