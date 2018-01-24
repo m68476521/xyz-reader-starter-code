@@ -13,7 +13,6 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,8 +32,6 @@ public class ArticleDetailActivity extends AppCompatActivity
 
     private Cursor mCursor;
     private long mStartId;
-
-    private long mSelectedItemId;
 
     private ViewPager mPager;
     private MyPagerAdapter mPagerAdapter;
@@ -56,7 +53,7 @@ public class ArticleDetailActivity extends AppCompatActivity
         if (savedInstanceState == null) {
             if (getIntent() != null && getIntent().getData() != null) {
                 mStartId = ItemsContract.Items.getItemId(getIntent().getData());
-                mSelectedItemId = mStartId;
+                long selectedItemId = mStartId;
             }
         }
     }
@@ -126,7 +123,7 @@ public class ArticleDetailActivity extends AppCompatActivity
         }
     }
 
-    public void changeViews() {
+    private void changeViews() {
         try {
             findViewById(R.id.share_fab).setOnClickListener(new View.OnClickListener() {
                 @Override

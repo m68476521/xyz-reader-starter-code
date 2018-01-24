@@ -9,7 +9,7 @@
                                     android:elevation="4dp"
                                     android:focusable="true"
                                     android:foreground="?selectableItemBackground"
-                                    android:stateListAnimator="@anim/click_raise">
+                                    android:stateListAnimator="@animator/click_raise">
 
     <LinearLayout
         android:layout_width="match_parent"

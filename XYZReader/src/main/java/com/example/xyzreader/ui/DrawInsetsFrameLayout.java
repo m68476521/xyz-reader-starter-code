@@ -21,7 +21,6 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.view.WindowInsets;
 import android.widget.FrameLayout;
@@ -80,9 +79,8 @@ public class DrawInsetsFrameLayout extends FrameLayout {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            requestApplyInsets();
-        }
+        requestApplyInsets();
+
         if (mInsetBackground != null) {
             mInsetBackground.setCallback(this);
         }

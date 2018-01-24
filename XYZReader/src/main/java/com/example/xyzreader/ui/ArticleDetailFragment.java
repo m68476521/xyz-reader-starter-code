@@ -8,7 +8,6 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -48,20 +47,15 @@ public class ArticleDetailFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final String TAG = "ArticleDetailFragment";
 
-    public static final String ARG_ITEM_ID = "item_id";
+    private static final String ARG_ITEM_ID = "item_id";
 
     private Cursor mCursor;
     private long mItemId;
 
-    private FloatingActionButton mFloatingActionButton;
-
     private ImageView mPhotoView;
     private View mRootView;
-    private boolean mIsCard = false;
     private boolean mIsVisibleToUser = false;
-    private int mStatusBarFullOpacityBottom;
     private PopupWindow mPopupWindow;
-    private ProgressDialog dialog;
     private String bodyDetails;
     private String imageUrl;
 
@@ -96,12 +90,11 @@ public class ArticleDetailFragment extends Fragment
             mItemId = getArguments().getLong(ARG_ITEM_ID);
         }
 
-        mIsCard = getResources().getBoolean(R.bool.detail_is_card);
-        mStatusBarFullOpacityBottom = getResources().getDimensionPixelSize(
+        boolean isCard = getResources().getBoolean(R.bool.detail_is_card);
+        int statusBarFullOpacityBottom = getResources().getDimensionPixelSize(
                 R.dimen.detail_card_top_margin);
         setHasOptionsMenu(true);
-        Cursor c = getActivity().getContentResolver().query(ItemsContract.Items.buildItemUri(mItemId), ArticleLoader.Query.PROJECTION, null, null, ItemsContract.Items.DEFAULT_SORT);
-        mCursor = c;
+        mCursor = getActivity().getContentResolver().query(ItemsContract.Items.buildItemUri(mItemId), ArticleLoader.Query.PROJECTION, null, null, ItemsContract.Items.DEFAULT_SORT);
         mCursor.moveToFirst();
         imageUrl = mCursor.getString(ArticleLoader.Query.PHOTO_URL);
     }
@@ -113,8 +106,8 @@ public class ArticleDetailFragment extends Fragment
 
         mPhotoView = getActivity().findViewById(R.id.imgTitle);
 
-        mFloatingActionButton =  getActivity().findViewById(R.id.share_fab);
-        mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton floatingActionButton = getActivity().findViewById(R.id.share_fab);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(Intent.createChooser(ShareCompat.IntentBuilder.from(getActivity())
@@ -245,9 +238,9 @@ public class ArticleDetailFragment extends Fragment
         bindViews();
     }
 
-    public void showPopupBodyInfo(String bodytext) {
+    private void showPopupBodyInfo(String bodytext) {
 
-        dialog = ProgressDialog.show(getActivity(), "",
+        ProgressDialog dialog = ProgressDialog.show(getActivity(), "",
                 "Loading. Please wait...", true);
 
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -258,9 +251,8 @@ public class ArticleDetailFragment extends Fragment
                 ViewGroup.LayoutParams.WRAP_CONTENT
         );
 
-        if (Build.VERSION.SDK_INT >= 21) {
-            mPopupWindow.setElevation(5.0f);
-        }
+
+        mPopupWindow.setElevation(5.0f);
 
         ImageButton closeButton = customView.findViewById(R.id.ib_close);
         TextView bodyText = customView.findViewById(R.id.body_message);

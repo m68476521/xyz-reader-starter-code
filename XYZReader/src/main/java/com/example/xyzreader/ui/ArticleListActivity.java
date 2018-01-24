@@ -12,7 +12,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -55,7 +54,6 @@ public class ArticleListActivity extends AppCompatActivity implements
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
-    private AppBarLayout mAppBarLayout;
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
 
     @Override
@@ -73,11 +71,11 @@ public class ArticleListActivity extends AppCompatActivity implements
 
         mRecyclerView = findViewById(R.id.recycler_view);
 
-        mAppBarLayout = findViewById(R.id.app_bar_layout);
+        AppBarLayout appBarLayout = findViewById(R.id.app_bar_layout);
 
         mCollapsingToolbarLayout = findViewById(R.id.collapsing_toolbar_layout);
 
-        mAppBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             boolean isShow = false;
             int scrollRange = -1;
 
