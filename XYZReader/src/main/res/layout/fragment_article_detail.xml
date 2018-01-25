@@ -85,4 +85,6 @@
 
     </FrameLayout>
 
+    <include layout="@layout/custom_popup"/>
+
 </android.support.design.widget.CoordinatorLayout>
