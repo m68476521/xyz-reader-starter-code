@@ -10,6 +10,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ShareCompat;
@@ -183,20 +184,11 @@ public class ArticleDetailFragment extends Fragment
             seeMore.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                getActivity().runOnUiThread(new Runnable() {
-                                    public void run() {
-                                        showPopupBodyInfo(bodyDetails);
-                                    }
-                                });
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }).start();
+                    BottomSheetDialogFragment bottomSheetDialogFragment = new CustomBottomSheet();
+                    Bundle args = new Bundle();
+                    args.putString("bodyTextCompleted", bodyDetails);
+                    bottomSheetDialogFragment.setArguments(args);
+                    bottomSheetDialogFragment.show(getActivity().getSupportFragmentManager(), bottomSheetDialogFragment.getTag());
                 }
             });
 
@@ -210,36 +202,6 @@ public class ArticleDetailFragment extends Fragment
             bylineView.setText("N/A");
             bodyView.setText("N/A");
         }
-
-        // get the bottom sheet view
-        LinearLayout llBottomSheet = mRootView.findViewById(R.id.custom_popup);
-
-        // init the bottom sheet behavior
-        BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(llBottomSheet);
-
-        // change the state of the bottom sheet
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-
-        // set the peek height
-        bottomSheetBehavior.setPeekHeight(140);
-
-        // set hideable or not
-        bottomSheetBehavior.setHideable(false);
-
-        // set callback for changes
-        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-            @Override
-            public void onStateChanged(View bottomSheet, int newState) {
-
-            }
-
-            @Override
-            public void onSlide(View bottomSheet, float slideOffset) {
-
-            }
-        });
     }
 
     @Override
@@ -284,22 +246,11 @@ public class ArticleDetailFragment extends Fragment
                 ViewGroup.LayoutParams.WRAP_CONTENT
         );
 
-
         mPopupWindow.setElevation(5.0f);
 
-        ImageButton closeButton = customView.findViewById(R.id.ib_close);
         TextView bodyText = customView.findViewById(R.id.body_message);
 
         bodyText.setText(bodytext);
-
-        // Set a click listener for the popup window close button
-        closeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Dismiss the popup window
-                mPopupWindow.dismiss();
-            }
-        });
 
         mPopupWindow.setAnimationStyle(android.R.style.Animation_Translucent);
         mPopupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));

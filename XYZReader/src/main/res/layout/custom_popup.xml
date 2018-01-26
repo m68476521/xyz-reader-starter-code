@@ -1,28 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/custom_popup"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginBottom="25dp"
-    android:layout_marginTop="25dp"
-    android:background="@color/ltgray"
-    android:fillViewport="true"
-    android:padding="2dp"
-    android:orientation="vertical"
-    app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
-    app:behavior_hideable="true"
-    app:behavior_peekHeight="80dp">
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:id="@+id/custom_popup"
+              android:layout_width="match_parent"
+              android:layout_height="350dp"
+              android:layout_marginTop="425dp"
+              android:background="@color/ltgray"
+              android:orientation="vertical"
+              app:behavior_hideable="true"
+              app:behavior_peekHeight="580dp"
+              app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
 
-        <ImageButton
-            android:id="@+id/ib_close"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_gravity="end"
-            android:background="@null"
-            android:contentDescription="@string/image_desc"
-            android:src="@drawable/ic_close_black_24dp"
-            />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <TextView
             android:id="@+id/body_message"
@@ -36,6 +27,6 @@
             android:textColor="@color/theme_primary"
             android:textSize="25sp"
             />
-
+    </ScrollView>
 
 </LinearLayout>

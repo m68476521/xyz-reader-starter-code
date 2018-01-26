@@ -8,18 +8,20 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        >
 
         <android.support.v4.widget.NestedScrollView
             android:id="@+id/nestedScrollView"
             android:layout_width="match_parent"
+
             android:layout_height="match_parent">
 
             <com.example.xyzreader.ui.MaxWidthLinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:background="#fff"
+                android:background="@color/theme_primary_extra_dark"
                 android:elevation="2dp"
                 android:maxWidth="@dimen/detail_card_max_width"
                 android:orientation="vertical">
@@ -81,10 +83,9 @@
                     android:textSize="@dimen/detail_body_text_size"/>
 
             </com.example.xyzreader.ui.MaxWidthLinearLayout>
+
         </android.support.v4.widget.NestedScrollView>
 
     </FrameLayout>
-
-    <include layout="@layout/custom_popup"/>
 
 </android.support.design.widget.CoordinatorLayout>
