@@ -54,6 +54,8 @@
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="@dimen/fab_margin"
         android:layout_marginEnd="@dimen/fab_margin"
+        app:pressedTranslationZ="@dimen/floating_elevation"
+        app:elevation="@dimen/floating_elevation"
         android:contentDescription="@string/action_share"
         android:src="@drawable/ic_share"/>
 
