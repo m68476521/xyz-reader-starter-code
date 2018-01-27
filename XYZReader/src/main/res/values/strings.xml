@@ -14,4 +14,6 @@
     <string name="article_image_transition">article_image_transition</string>
     <string name="image_desc">simple image description</string>
 
+    <string name="msg_no_internet">NO INTERNET CONNECTION</string>
+
 </resources>
